@@ -31,5 +31,14 @@ namespace Amz.Scrape.Properties {
                 return ((string)(this["BaseDomain"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.amazon.de/gp/css/order-history/ref=ya_orders_css")]
+        public string StartUrl {
+            get {
+                return ((string)(this["StartUrl"]));
+            }
+        }
     }
 }
