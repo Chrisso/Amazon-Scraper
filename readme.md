@@ -1,6 +1,6 @@
 # English
 
-Download all your orders from amazon.com using your Firefox authorization cookies.
+Download all your orders from amazon.de (!) using your Firefox authorization cookies.
 
 # German
 
