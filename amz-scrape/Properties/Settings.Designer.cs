@@ -40,5 +40,15 @@ namespace Amz.Scrape.Properties {
                 return ((string)(this["StartUrl"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.amazon.de/gp/your-account/order-history/ref=oh_aui_pagination_1_{0}?i" +
+            "e=UTF8&orderFilter=year-{1}&search=&startIndex={2}")]
+        public string HistoryUrlTemplate {
+            get {
+                return ((string)(this["HistoryUrlTemplate"]));
+            }
+        }
     }
 }
