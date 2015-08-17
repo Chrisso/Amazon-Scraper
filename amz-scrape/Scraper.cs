@@ -52,10 +52,10 @@ namespace Amz.Scrape
 
         public double LoadYear(string url, int year)
         {
-            int numPages = 0;
             double orderSum = 0.0;
+            List<string> orderPages = new List<string>();
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(string.Format(url, 1, year, 0));
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(string.Format(url, year));
             request.CookieContainer = cookies;
 
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -69,16 +69,20 @@ namespace Amz.Scrape
                 HtmlAgilityPack.HtmlNode node = doc.DocumentNode.SelectSingleNode("//ul[@class='a-pagination']");
                 if (node != null)
                 {
-                    numPages = node.SelectNodes("li").Count-2; // ignore back and forward buttons
-                    orderSum += ScanOrders(doc.DocumentNode.SelectSingleNode("//div[@id='ordersContainer']"));
+                    foreach (var link in node.SelectNodes(".//a[@href]"))
+                        orderPages.Add(link.Attributes["href"].Value.Trim());
+                    if (orderPages.Count > 1)
+                        orderPages.RemoveAt(orderPages.Count - 1); // last link in list is next button
                 }
-                else throw new InvalidOperationException("Unknown pagination format!");
+                else orderSum += ScanOrders(doc.DocumentNode.SelectSingleNode("//div[@id='ordersContainer']"));
             }
 
-            for (int i = 2; i < numPages; i++)
+            string prefix = new Uri(string.Format(url, year)).GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped);
+            for (int i=0; i<orderPages.Count; i++)
             {
-                Console.WriteLine("\tpage {0}...", i);
-                request = (HttpWebRequest)WebRequest.Create(string.Format(url, i, year, (i - 1) * 10));
+                Console.WriteLine("\tpage {0}...", i+1);
+                string page_url = orderPages[i].StartsWith("http") ? orderPages[i] : prefix + orderPages[i];
+                request = (HttpWebRequest)WebRequest.Create(page_url);
                 request.CookieContainer = cookies;
 
                 response = (HttpWebResponse)request.GetResponse();

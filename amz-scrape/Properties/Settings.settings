@@ -9,7 +9,7 @@
       <Value Profile="(Default)">https://www.amazon.de/gp/css/order-history/ref=ya_orders_css</Value>
     </Setting>
     <Setting Name="HistoryUrlTemplate" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">https://www.amazon.de/gp/your-account/order-history/ref=oh_aui_pagination_1_{0}?ie=UTF8&amp;orderFilter=year-{1}&amp;search=&amp;startIndex={2}</Value>
+      <Value Profile="(Default)">https://www.amazon.de/gp/your-account/order-history?opt=ab&amp;digitalOrders=1&amp;unifiedOrders=1&amp;orderFilter=year-{0}</Value>
     </Setting>
   </Settings>
 </SettingsFile>

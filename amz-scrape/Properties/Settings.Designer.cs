@@ -43,8 +43,8 @@ namespace Amz.Scrape.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://www.amazon.de/gp/your-account/order-history/ref=oh_aui_pagination_1_{0}?i" +
-            "e=UTF8&orderFilter=year-{1}&search=&startIndex={2}")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.amazon.de/gp/your-account/order-history?opt=ab&digitalOrders=1&unifie" +
+            "dOrders=1&orderFilter=year-{0}")]
         public string HistoryUrlTemplate {
             get {
                 return ((string)(this["HistoryUrlTemplate"]));
