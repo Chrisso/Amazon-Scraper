@@ -8,6 +8,7 @@ namespace Amz.Scrape
     public class Scraper
     {
         private CookieContainer cookies;
+        private System.Globalization.NumberFormatInfo nfi = System.Globalization.CultureInfo.GetCultureInfo("de-DE").NumberFormat;
 
         public Scraper(CookieContainer cc)
         {
@@ -49,9 +50,10 @@ namespace Amz.Scrape
             return result;
         }
 
-        public void LoadYear(string url, int year)
+        public double LoadYear(string url, int year)
         {
             int numPages = 0;
+            double orderSum = 0.0;
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(string.Format(url, 1, year, 0));
             request.CookieContainer = cookies;
@@ -68,7 +70,7 @@ namespace Amz.Scrape
                 if (node != null)
                 {
                     numPages = node.SelectNodes("li").Count-2; // ignore back and forward buttons
-                    ScanOrders(doc.DocumentNode.SelectSingleNode("//div[@id='ordersContainer']"));
+                    orderSum += ScanOrders(doc.DocumentNode.SelectSingleNode("//div[@id='ordersContainer']"));
                 }
                 else throw new InvalidOperationException("Unknown pagination format!");
             }
@@ -86,13 +88,18 @@ namespace Amz.Scrape
                 {
                     HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                     doc.LoadHtml(sr.ReadToEnd());
-                    ScanOrders(doc.DocumentNode.SelectSingleNode("//div[@id='ordersContainer']"));
+                    orderSum += ScanOrders(doc.DocumentNode.SelectSingleNode("//div[@id='ordersContainer']"));
                 }
             }
+
+            Console.WriteLine("\tyear total: " + orderSum);
+            return orderSum;
         }
 
-        private void ScanOrders(HtmlAgilityPack.HtmlNode node)
+        private double ScanOrders(HtmlAgilityPack.HtmlNode node)
         {
+            double sum = 0.0;
+
             foreach (HtmlAgilityPack.HtmlNode order in node.SelectNodes(".//div[contains(@class, 'order')]"))
             {
                 HtmlAgilityPack.HtmlNode info = order.SelectSingleNode(".//div[contains(@class, 'order-info')]");
@@ -101,11 +108,23 @@ namespace Amz.Scrape
                     Console.Write("\tOrder: ");
                     HtmlAgilityPack.HtmlNode price = info.SelectSingleNode(".//div[contains(@class, 'a-span2')]//span[contains(@class, 'value')]");
                     if (price != null)
-                        Console.WriteLine(price.InnerText.Trim());
-                    else
-                        Console.WriteLine("not found!");
+                    {
+                        double p = ScanPrice(price.InnerText.Trim());
+                        sum += p;
+                        Console.WriteLine(p);
+                    }
+                    else Console.WriteLine("not found!");
                 }
             }
+
+            return sum;
+        }
+
+        private double ScanPrice(string s)
+        {
+            if (s.StartsWith("EUR "))
+                return Convert.ToDouble(s.Substring(4), nfi);
+            return 0.0;
         }
     }
 }

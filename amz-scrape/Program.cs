@@ -16,15 +16,19 @@ namespace Amz.Scrape
                 {
                     Scraper scraper = new Scraper(cf);
                     var years = scraper.LoadOverview(Properties.Settings.Default.StartUrl);
+                    double total = 0.0;
+
                     foreach (var n in years)
                     {
                         Console.WriteLine("Scraping " + n + "...");
-                        scraper.LoadYear(Properties.Settings.Default.HistoryUrlTemplate, n);
+                        total += scraper.LoadYear(Properties.Settings.Default.HistoryUrlTemplate, n);
 
                         #if DEBUG
                             if (n < 2015) break;
                         #endif
                     }
+
+                    Console.WriteLine("Total: " + total);
                 }
                 catch (Exception exc)
                 {
