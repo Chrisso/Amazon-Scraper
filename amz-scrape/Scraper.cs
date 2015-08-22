@@ -55,6 +55,7 @@ namespace Amz.Scrape
         {
             double orderSum = 0.0;
             List<string> orderPages = new List<string>();
+            string prefix = new Uri(string.Format(url, year)).GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped);
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(string.Format(url, year));
             request.CookieContainer = cookies;
@@ -75,10 +76,9 @@ namespace Amz.Scrape
                     if (orderPages.Count > 1)
                         orderPages.RemoveAt(orderPages.Count - 1); // last link in list is next button
                 }
-                else orderSum += ScanOrders(doc.DocumentNode.SelectSingleNode("//div[@id='ordersContainer']"));
+                else orderSum += ScanOrders(doc.DocumentNode.SelectSingleNode("//div[@id='ordersContainer']"), prefix);
             }
 
-            string prefix = new Uri(string.Format(url, year)).GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped);
             for (int i=0; i<orderPages.Count; i++)
             {
                 Console.WriteLine("\tpage {0}...", i+1);
@@ -93,7 +93,7 @@ namespace Amz.Scrape
                 {
                     HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                     doc.LoadHtml(sr.ReadToEnd());
-                    orderSum += ScanOrders(doc.DocumentNode.SelectSingleNode("//div[@id='ordersContainer']"));
+                    orderSum += ScanOrders(doc.DocumentNode.SelectSingleNode("//div[@id='ordersContainer']"), prefix);
                 }
             }
 
@@ -101,16 +101,17 @@ namespace Amz.Scrape
             return orderSum;
         }
 
-        private double ScanOrders(HtmlAgilityPack.HtmlNode node)
+        private double ScanOrders(HtmlAgilityPack.HtmlNode node, string prefix)
         {
             List<Order> orders = new List<Order>();
 
             foreach (HtmlAgilityPack.HtmlNode order in node.SelectNodes(".//div[contains(@class, 'order')]"))
             {
                 HtmlAgilityPack.HtmlNode info = order.SelectSingleNode(".//div[contains(@class, 'order-info')]");
+                Order o = new Order();
+
                 if (info != null)
                 {
-                    Order o = new Order();
                     Console.Write("\tOrder: ");
                     HtmlAgilityPack.HtmlNode price = info.SelectSingleNode(".//div[contains(@class, 'a-span2')]//span[contains(@class, 'value')]");
                     if (price != null)
@@ -131,9 +132,26 @@ namespace Amz.Scrape
                     {
                         o.Date = ScanDate(date.InnerText.Trim());
                     }
+                }
 
-                    if (o.IsInitialized())
-                        orders.Add(o);
+                if (o.IsInitialized())
+                {
+                    foreach (HtmlAgilityPack.HtmlNode product in order.SelectNodes(".//div[contains(@class, 'a-spacing')]//div[contains(@class, 'a-col-right')]"))
+                    {
+                        HtmlAgilityPack.HtmlNode name = product.SelectSingleNode(".//a[contains(@class, 'a-link-normal')]");
+                        HtmlAgilityPack.HtmlNode price = product.SelectSingleNode(".//span[contains(@class, 'a-color-price')]");
+                        if ((name != null) && (price != null))
+                        {
+                            Product p = new Product();
+                            p.Price = ScanPrice(price.InnerText.Trim());
+                            p.Url = name.Attributes["href"].Value.StartsWith("http") ?
+                                        name.Attributes["href"].Value : prefix + name.Attributes["href"].Value;
+                            p.Name = WebUtility.HtmlDecode(name.InnerText.Trim());
+                            o.Products.Add(p);
+                        }
+                    }
+
+                    orders.Add(o);
                 }
             }
 
