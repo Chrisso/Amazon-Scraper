@@ -2,13 +2,14 @@
 using System.IO;
 using System.Net;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Amz.Scrape
 {
     public class Scraper
     {
         private CookieContainer cookies;
-        private System.Globalization.NumberFormatInfo nfi = System.Globalization.CultureInfo.GetCultureInfo("de-DE").NumberFormat;
+        private System.Globalization.CultureInfo ci = System.Globalization.CultureInfo.GetCultureInfo("de-DE");
 
         public Scraper(CookieContainer cc)
         {
@@ -102,33 +103,55 @@ namespace Amz.Scrape
 
         private double ScanOrders(HtmlAgilityPack.HtmlNode node)
         {
-            double sum = 0.0;
+            List<Order> orders = new List<Order>();
 
             foreach (HtmlAgilityPack.HtmlNode order in node.SelectNodes(".//div[contains(@class, 'order')]"))
             {
                 HtmlAgilityPack.HtmlNode info = order.SelectSingleNode(".//div[contains(@class, 'order-info')]");
                 if (info != null)
                 {
+                    Order o = new Order();
                     Console.Write("\tOrder: ");
                     HtmlAgilityPack.HtmlNode price = info.SelectSingleNode(".//div[contains(@class, 'a-span2')]//span[contains(@class, 'value')]");
                     if (price != null)
                     {
-                        double p = ScanPrice(price.InnerText.Trim());
-                        sum += p;
-                        Console.WriteLine(p);
+                        o.Sum = ScanPrice(price.InnerText.Trim());
+                        Console.WriteLine(o.Sum);
                     }
                     else Console.WriteLine("not found!");
+
+                    HtmlAgilityPack.HtmlNode id = info.SelectSingleNode(".//div[contains(@class, 'a-col-right')]//span[contains(@class, 'value')]");
+                    if (id != null)
+                    {
+                        o.Id = id.InnerText.Trim();
+                    }
+
+                    HtmlAgilityPack.HtmlNode date = info.SelectSingleNode(".//div[contains(@class, 'a-span4')]//span[contains(@class, 'value')]");
+                    if (date != null)
+                    {
+                        o.Date = ScanDate(date.InnerText.Trim());
+                    }
+
+                    if (o.IsInitialized())
+                        orders.Add(o);
                 }
             }
 
-            return sum;
+            return orders.Aggregate(0.0, (acc, o) => acc + o.Sum);
         }
 
         private double ScanPrice(string s)
         {
             if (s.StartsWith("EUR "))
-                return Convert.ToDouble(s.Substring(4), nfi);
+                return Convert.ToDouble(s.Substring(4), ci.NumberFormat);
             return 0.0;
+        }
+
+        private DateTime ScanDate(string s)
+        {
+            DateTime result = new DateTime();
+            DateTime.TryParse(s, ci.DateTimeFormat, System.Globalization.DateTimeStyles.AllowWhiteSpaces, out result);
+            return result;
         }
     }
 }
