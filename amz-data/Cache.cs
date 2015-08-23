@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SQLite;
 using System.Collections.Generic;
 
-namespace Amz.Scrape
+namespace Amz.Data
 {
     public class Cache : IOrderLoader, IDisposable
     {

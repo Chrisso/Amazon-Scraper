@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 
-namespace Amz.Scrape
+namespace Amz.Data
 {
     public class Order
     {

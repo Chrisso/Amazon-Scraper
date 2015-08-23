@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "amz-scrape", "amz-scrape\am
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "amz-auth", "amz-auth\amz-auth.csproj", "{232B5B08-C8EF-49F7-8331-1CA4B9A1F505}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "amz-data", "amz-data\amz-data.csproj", "{C6EB5923-16F5-42CF-8636-4695FEDD1366}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{232B5B08-C8EF-49F7-8331-1CA4B9A1F505}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{232B5B08-C8EF-49F7-8331-1CA4B9A1F505}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{232B5B08-C8EF-49F7-8331-1CA4B9A1F505}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6EB5923-16F5-42CF-8636-4695FEDD1366}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6EB5923-16F5-42CF-8636-4695FEDD1366}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6EB5923-16F5-42CF-8636-4695FEDD1366}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6EB5923-16F5-42CF-8636-4695FEDD1366}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
