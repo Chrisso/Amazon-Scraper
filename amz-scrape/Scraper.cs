@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Amz.Scrape
 {
@@ -51,9 +50,9 @@ namespace Amz.Scrape
             return result;
         }
 
-        public double LoadYear(string url, int year)
+        public List<Order> LoadYear(string url, int year)
         {
-            double orderSum = 0.0;
+            List<Order> result = new List<Order>();
             List<string> orderPages = new List<string>();
             string prefix = new Uri(string.Format(url, year)).GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped);
 
@@ -76,7 +75,7 @@ namespace Amz.Scrape
                     if (orderPages.Count > 1)
                         orderPages.RemoveAt(orderPages.Count - 1); // last link in list is next button
                 }
-                else orderSum += ScanOrders(doc.DocumentNode.SelectSingleNode("//div[@id='ordersContainer']"), prefix);
+                else result.AddRange(ScanOrders(doc.DocumentNode.SelectSingleNode("//div[@id='ordersContainer']"), prefix));
             }
 
             for (int i=0; i<orderPages.Count; i++)
@@ -93,15 +92,14 @@ namespace Amz.Scrape
                 {
                     HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                     doc.LoadHtml(sr.ReadToEnd());
-                    orderSum += ScanOrders(doc.DocumentNode.SelectSingleNode("//div[@id='ordersContainer']"), prefix);
+                    result.AddRange(ScanOrders(doc.DocumentNode.SelectSingleNode("//div[@id='ordersContainer']"), prefix));
                 }
             }
 
-            Console.WriteLine("\tyear total: " + orderSum);
-            return orderSum;
+            return result;
         }
 
-        private double ScanOrders(HtmlAgilityPack.HtmlNode node, string prefix)
+        private List<Order> ScanOrders(HtmlAgilityPack.HtmlNode node, string prefix)
         {
             List<Order> orders = new List<Order>();
 
@@ -112,14 +110,11 @@ namespace Amz.Scrape
 
                 if (info != null)
                 {
-                    Console.Write("\tOrder: ");
                     HtmlAgilityPack.HtmlNode price = info.SelectSingleNode(".//div[contains(@class, 'a-span2')]//span[contains(@class, 'value')]");
                     if (price != null)
                     {
                         o.Sum = ScanPrice(price.InnerText.Trim());
-                        Console.WriteLine(o.Sum);
                     }
-                    else Console.WriteLine("not found!");
 
                     HtmlAgilityPack.HtmlNode id = info.SelectSingleNode(".//div[contains(@class, 'a-col-right')]//span[contains(@class, 'value')]");
                     if (id != null)
@@ -155,7 +150,7 @@ namespace Amz.Scrape
                 }
             }
 
-            return orders.Aggregate(0.0, (acc, o) => acc + o.Sum);
+            return orders;
         }
 
         private double ScanPrice(string s)

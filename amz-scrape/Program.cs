@@ -1,6 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Net;
+using System.Linq;
 
 namespace Amz.Scrape
 {
@@ -8,6 +7,8 @@ namespace Amz.Scrape
     {
         static void Main(string[] args)
         {
+            Cache cache = new Cache();
+
             Amz.Auth.CookiesFirefox cf = new Auth.CookiesFirefox(Properties.Settings.Default.BaseDomain);
             if (cf.Count > 0)
             {
@@ -15,13 +16,19 @@ namespace Amz.Scrape
                 try
                 {
                     Scraper scraper = new Scraper(cf);
+                    bool useCache = false;
                     var years = scraper.LoadOverview(Properties.Settings.Default.StartUrl);
                     double total = 0.0;
 
                     foreach (var n in years)
                     {
                         Console.WriteLine("Scraping " + n + "...");
-                        total += scraper.LoadYear(Properties.Settings.Default.HistoryUrlTemplate, n);
+                        var orders = useCache? cache.LoadYear(n) : scraper.LoadYear(Properties.Settings.Default.HistoryUrlTemplate, n);
+                        useCache = orders.Count != cache.Store(orders);
+
+                        double year_total = orders.Aggregate(0.0, (acc, o) => acc + o.Sum);
+                        Console.WriteLine("\tTotal: " + year_total);
+                        total += year_total;
 
                         #if DEBUG
                             if (n < 2015) break;
@@ -36,6 +43,8 @@ namespace Amz.Scrape
                 }
             }
             else Console.Error.WriteLine("No credentials found!");
+
+            cache.Dispose();
 
 #if DEBUG
             Console.WriteLine("Any key to exit.");
