@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Amz.Scrape
 {
-    public class Scraper
+    public class Scraper : IOrderLoader
     {
         private CookieContainer cookies;
         private System.Globalization.CultureInfo ci = System.Globalization.CultureInfo.GetCultureInfo("de-DE");
@@ -50,7 +50,7 @@ namespace Amz.Scrape
             return result;
         }
 
-        public List<Order> LoadYear(string url, int year)
+        public List<Order> LoadYear(int year, string url)
         {
             List<Order> result = new List<Order>();
             List<string> orderPages = new List<string>();

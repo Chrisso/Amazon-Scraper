@@ -7,24 +7,41 @@ namespace Amz.Scrape
     {
         static void Main(string[] args)
         {
-            Cache cache = new Cache();
-
-            Amz.Auth.CookiesFirefox cf = new Auth.CookiesFirefox(Properties.Settings.Default.BaseDomain);
-            if (cf.Count > 0)
+            bool offline = false;
+            for (int i=0; i<args.Length; i++)
             {
-                Console.WriteLine("Trying Firefox login credentials (" + cf.Count + " cookies)...");
+                if (string.Compare(args[i], "-o", true) == 0)
+                    offline = true;
+            }
+
+            Cache cache = new Cache();
+            IOrderLoader loader = null;
+
+            if (!offline)
+            {
+                Amz.Auth.CookiesFirefox cf = new Auth.CookiesFirefox(Properties.Settings.Default.BaseDomain);
+                if (cf.Count > 0)
+                {
+                    Console.WriteLine("Trying Firefox login credentials (" + cf.Count + " cookies)...");
+                    loader = new Scraper(cf);
+                }
+                else Console.Error.WriteLine("Could not log in!");
+            }
+            else loader = cache;
+
+            if (loader != null)
+            {
                 try
                 {
-                    Scraper scraper = new Scraper(cf);
-                    bool useCache = false;
-                    var years = scraper.LoadOverview(Properties.Settings.Default.StartUrl);
+                    var years = loader.LoadOverview(Properties.Settings.Default.StartUrl);
                     double total = 0.0;
 
                     foreach (var n in years)
                     {
-                        Console.WriteLine("Scraping " + n + "...");
-                        var orders = useCache? cache.LoadYear(n) : scraper.LoadYear(Properties.Settings.Default.HistoryUrlTemplate, n);
-                        useCache = orders.Count != cache.Store(orders);
+                        Console.WriteLine("Loading " + n + "...");
+                        var orders = loader.LoadYear(n, Properties.Settings.Default.HistoryUrlTemplate);
+                        if (orders.Count != cache.Store(orders))
+                            loader = cache;
 
                         double year_total = orders.Aggregate(0.0, (acc, o) => acc + o.Sum);
                         Console.WriteLine("\tTotal: " + year_total);
@@ -42,7 +59,6 @@ namespace Amz.Scrape
                     Console.Error.WriteLine(exc.Message);
                 }
             }
-            else Console.Error.WriteLine("No credentials found!");
 
             cache.Dispose();
 

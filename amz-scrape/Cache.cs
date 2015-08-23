@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Amz.Scrape
 {
-    public class Cache : IDisposable
+    public class Cache : IOrderLoader, IDisposable
     {
         private SQLiteConnection connection;
 
@@ -81,7 +81,23 @@ namespace Amz.Scrape
             return inserted;
         }
 
-        public List<Order> LoadYear(int year)
+        public List<int> LoadOverview(string unused)
+        {
+            List<int> result = new List<int>();
+
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT DISTINCT strftime('%Y', [Date]) FROM [Orders]";
+
+            using (SQLiteDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                    result.Add(Convert.ToInt32(reader.GetString(0)));
+            }
+
+            return result;
+        }
+
+        public List<Order> LoadYear(int year, string unused)
         {
             List<Order> result = new List<Order>();
 

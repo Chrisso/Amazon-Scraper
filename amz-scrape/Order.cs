@@ -22,6 +22,12 @@ namespace Amz.Scrape
         }
     }
 
+    public interface IOrderLoader
+    {
+        List<int> LoadOverview(string url);
+        List<Order> LoadYear(int year, string url);
+    }
+
     public class Product
     {
         public string ISIN { get; set; }
