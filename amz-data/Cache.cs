@@ -29,6 +29,29 @@ namespace Amz.Data
             connection.Close();
         }
 
+        public void Clean()
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "DROP TABLE IF EXISTS [Products]";
+            command.ExecuteNonQuery();
+            command.CommandText = "DROP TABLE IF EXISTS [Orders]";
+            command.ExecuteNonQuery();
+
+            string file = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                connection.DataSource + ".sqlite"); // assumes extension!
+
+            connection.Close();
+            connection.Dispose();
+            connection = null;
+
+            if (File.Exists(file))
+            {
+                try { File.Delete(file); }
+                catch (IOException) { /* nothing */ }
+            }
+        }
+
         public int Store(List<Order> orders)
         {
             int inserted = 0;

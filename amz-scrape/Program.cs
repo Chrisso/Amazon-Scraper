@@ -11,6 +11,11 @@ namespace Amz.Scrape
             bool offline = false;
             for (int i=0; i<args.Length; i++)
             {
+                if (string.Compare(args[i], "-clean", true) == 0)
+                {
+                    new Cache().Clean();
+                    return;
+                }
                 if (string.Compare(args[i], "-o", true) == 0)
                     offline = true;
             }
