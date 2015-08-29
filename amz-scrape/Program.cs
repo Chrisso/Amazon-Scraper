@@ -11,6 +11,14 @@ namespace Amz.Scrape
             bool offline = false;
             for (int i=0; i<args.Length; i++)
             {
+                if (string.Compare(args[i], "-help", true) == 0)
+                {
+                    Console.WriteLine("Options:");
+                    Console.WriteLine("\t-clean\tclear local cache");
+                    Console.WriteLine("\t-help\tshow this message");
+                    Console.WriteLine("\t-o\toffline mode (use cache only)");
+                    return;
+                }
                 if (string.Compare(args[i], "-clean", true) == 0)
                 {
                     new Cache().Clean();
