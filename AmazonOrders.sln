@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "amz-auth", "amz-auth\amz-au
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "amz-data", "amz-data\amz-data.csproj", "{C6EB5923-16F5-42CF-8636-4695FEDD1366}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "amz-dump", "amz-dump\amz-dump.csproj", "{303F018B-D687-49CA-B1C9-67EE20CE7EAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C6EB5923-16F5-42CF-8636-4695FEDD1366}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6EB5923-16F5-42CF-8636-4695FEDD1366}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6EB5923-16F5-42CF-8636-4695FEDD1366}.Release|Any CPU.Build.0 = Release|Any CPU
+		{303F018B-D687-49CA-B1C9-67EE20CE7EAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{303F018B-D687-49CA-B1C9-67EE20CE7EAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{303F018B-D687-49CA-B1C9-67EE20CE7EAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{303F018B-D687-49CA-B1C9-67EE20CE7EAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
