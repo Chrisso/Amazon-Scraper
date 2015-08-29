@@ -20,7 +20,7 @@ namespace Amz.Data
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "CREATE TABLE IF NOT EXISTS [Orders] ([Id] INTEGER PRIMARY KEY, [AId] TEXT NOT NULL UNIQUE, [Total] REAL NOT NULL, [Date] DATETIME NOT NULL)";
             command.ExecuteNonQuery();
-            command.CommandText = "CREATE TABLE IF NOT EXISTS [Products] ([Id] INTEGER PRIMARY KEY, [Order] INTEGER NOT NULL, [ISIN] TEXT NOT NULL, [Name] TEXT NOT NULL, [Price] REAL NOT NULL, [Url] TEXT NOT NULL)";
+            command.CommandText = "CREATE TABLE IF NOT EXISTS [Products] ([Id] INTEGER PRIMARY KEY, [Order] INTEGER NOT NULL, [ASIN] TEXT NOT NULL, [Name] TEXT NOT NULL, [Price] REAL NOT NULL, [Url] TEXT NOT NULL)";
             command.ExecuteNonQuery();
         }
 
@@ -69,9 +69,9 @@ namespace Amz.Data
             insertOrder.Prepare();
 
             SQLiteCommand insertProduct = connection.CreateCommand();
-            insertProduct.CommandText = "INSERT INTO [Products] ([Order], [ISIN], [Name], [Price], [Url]) VALUES (?, ?, ?, ?, ?)";
+            insertProduct.CommandText = "INSERT INTO [Products] ([Order], [ASIN], [Name], [Price], [Url]) VALUES (?, ?, ?, ?, ?)";
             insertProduct.Parameters.Add("oid", DbType.Int32);
-            insertProduct.Parameters.Add("isin", DbType.String);
+            insertProduct.Parameters.Add("asin", DbType.String);
             insertProduct.Parameters.Add("name", DbType.String);
             insertProduct.Parameters.Add("pric", DbType.Double);
             insertProduct.Parameters.Add("url", DbType.String);
@@ -90,7 +90,7 @@ namespace Amz.Data
                     insertProduct.Parameters[0].Value = (int)(System.Int64)insertCheck.ExecuteScalar();
                     foreach (Product product in order.Products)
                     {
-                        insertProduct.Parameters[1].Value = product.ISIN;
+                        insertProduct.Parameters[1].Value = product.ASIN;
                         insertProduct.Parameters[2].Value = product.Name;
                         insertProduct.Parameters[3].Value = product.Price;
                         insertProduct.Parameters[4].Value = product.Url;
@@ -150,7 +150,7 @@ namespace Amz.Data
             List<Product> result = new List<Product>();
 
             SQLiteCommand selectProducts = connection.CreateCommand();
-            selectProducts.CommandText = "SELECT [ISIN], [Name], [Price], [Url] FROM [Products] WHERE [Order]=?";
+            selectProducts.CommandText = "SELECT [ASIN], [Name], [Price], [Url] FROM [Products] WHERE [Order]=?";
             selectProducts.Parameters.Add("oid", DbType.Int32).Value = oid;
             selectProducts.Prepare();
 
@@ -159,7 +159,7 @@ namespace Amz.Data
                 while (reader.Read())
                 {
                     Product p = new Product();
-                    p.ISIN = reader.GetString(0);
+                    p.ASIN = reader.GetString(0);
                     p.Name = reader.GetString(1);
                     p.Price = reader.GetDouble(2);
                     p.Url = reader.GetString(3);

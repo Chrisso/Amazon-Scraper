@@ -30,7 +30,7 @@ namespace Amz.Data
 
     public class Product
     {
-        public string ISIN { get; set; }
+        public string ASIN { get; set; }
         public string Name { get; set; }
         public double Price { get; set; }
 
@@ -47,7 +47,7 @@ namespace Amz.Data
                 Regex regex = new Regex("/product/([^/]*)/");
                 Match m = regex.Match(_Url);
                 if (m.Success)
-                    ISIN = m.Groups[1].Value;
+                    ASIN = m.Groups[1].Value;
             }
         }
         
