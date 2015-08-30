@@ -4,7 +4,17 @@ Download all your orders from amazon.de (!) using your Firefox authorization coo
 
 # German
 
-Alle Bestellungen und alle Produkte, die Sie jemals bei amazon.de gekauft haben herunterladen und exportieren. Benutzt Autorisierungscookies von Firefox (loggen Sie sich erst mit Firefox bei amazon.de ein und benutzen Sie dann dieses Programm.
+Alle Bestellungen und alle Produkte, die Sie jemals bei amazon.de gekauft haben herunterladen und exportieren. Benutzt Autorisierungscookies von Firefox.
+
+# Anleitung
+
+Loggen Sie sich mit Firefox (https://www.mozilla.org/de/firefox) bei Amazon.de ein, öffnen Sie eine Konsole im Verzeichnis, in dem Sie den Amazon-Scraper entpackt haben. Laden Sie zunächst Ihre Bestellungen herunter, exportieren Sie sie im CSV-Format, um sie bspw. mit LibreOffice weiter zu verarbeiten, leeren Sie dann optional den lokalen Cache:
+
+```
+PS> amz-scrape
+PS> amz-dump > bestellungen.txt
+PS> amz-scrape -clean
+```
 
 # License
 
