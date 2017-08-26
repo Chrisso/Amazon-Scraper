@@ -62,7 +62,7 @@ namespace Amz.Scrape
                         total += year_total;
 
                         #if DEBUG
-                            if (n < 2015) break;
+                            if (n < DateTime.Now.Year) break;
                         #endif
                     }
 
