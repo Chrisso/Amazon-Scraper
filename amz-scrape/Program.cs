@@ -39,7 +39,11 @@ namespace Amz.Scrape
                     Console.WriteLine("Trying Firefox login credentials (" + cf.Count + " cookies)...");
                     loader = new Scraper(cf);
                 }
-                else Console.Error.WriteLine("Could not log in!");
+                else
+                {
+                    Console.Error.WriteLine("Could not log in!");
+                    Console.Error.WriteLine("Hint: use Firefox to log in and choose \"remember me\" to get a re-useable auth cookie.");
+                }
             }
             else loader = cache;
 
