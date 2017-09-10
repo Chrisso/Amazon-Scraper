@@ -48,9 +48,9 @@ namespace Amz.Auth
                     }
                 }
             }
-            catch (SQLiteException)
+            catch (SQLiteException exc)
             {
-
+                Console.WriteLine("Warning: " + exc.Message);
             }
             finally
             {
