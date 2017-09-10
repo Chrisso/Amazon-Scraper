@@ -33,16 +33,25 @@ namespace Amz.Scrape
 
             if (!offline)
             {
-                Amz.Auth.CookiesFirefox cf = new Auth.CookiesFirefox(Properties.Settings.Default.BaseDomain);
-                if (cf.Count > 0)
+                string domain = Properties.Settings.Default.BaseDomain;
+
+                Console.WriteLine("Searching cookies from Google Chrome...");
+                System.Net.CookieContainer cookies = new Amz.Auth.CookiesChrome(domain);
+                if (cookies.Count == 0)
                 {
-                    Console.WriteLine("Trying Firefox login credentials (" + cf.Count + " cookies)...");
-                    loader = new Scraper(cf);
+                    Console.WriteLine("Searching cookies from Mozilla Firefox...");
+                    cookies = new Amz.Auth.CookiesFirefox(domain);
+                }
+
+                if (cookies.Count > 0)
+                {
+                    Console.WriteLine("Trying browser login credentials (" + cookies.Count + " cookies)...");
+                    loader = new Scraper(cookies);
                 }
                 else
                 {
                     Console.Error.WriteLine("Could not log in!");
-                    Console.Error.WriteLine("Hint: use Firefox to log in and choose \"remember me\" to get a re-useable auth cookie.");
+                    Console.Error.WriteLine("Hint: use your browser to log in and choose \"remember me\" to get a re-useable auth cookie.");
                 }
             }
             else loader = cache;

@@ -45,7 +45,7 @@ namespace Amz.Scrape
                         }
                     }
                 }
-                else throw new InvalidOperationException("Login failed!");
+                else throw new InvalidOperationException("Scraping failed! (Maybe due to invalid login)");
             }
 
             return result;
